@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#efeee8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Race to Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Shared drawing materials: wobble filters, pencil hatching, creature outlines -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs id="shared-defs">
+    <filter id="boil" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="1" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2"/>
+    </filter>
+    <filter id="rough" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/>
+    </filter>
+    <pattern id="hatch-w" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-38)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#fff" stroke-width="1.4" opacity=".38"/>
+    </pattern>
+    <pattern id="hatch-d" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(32)">
+      <line x1="0" y1="0" x2="0" y2="4" stroke="#000" stroke-width="1.1" opacity=".2"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <p class="brand">Race to Home
+      <svg viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2 7 C 40 2, 80 11, 120 6 S 180 3, 198 7" fill="none" stroke="var(--red)" stroke-width="3" stroke-linecap="round"/></svg>
+    </p>
+    <button class="icon-btn" id="sound-btn" type="button" aria-pressed="true" aria-label="Sound">
+      <svg viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave" d="M15.5 9c1.3 1.6 1.3 4.4 0 6M18 6.5c2.6 3 2.6 8 0 11"/><path class="mute" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+    </button>
+    <button class="icon-btn" id="menu-btn" type="button" aria-label="Menu">
+      <svg viewBox="0 0 24 24"><path d="M4.5 7.2c5-.6 10-.2 15 .2M4.3 12.3c5.2-.4 10.3.3 15.2-.1M4.6 17.2c4.8.4 9.8-.3 14.9 0"/></svg>
+    </button>
+  </header>
+
+  <main class="stage" id="stage" aria-label="Game board">
+    <div class="doodles" aria-hidden="true">
+      <svg class="dd sun" viewBox="0 0 120 120" filter="url(#boil)">
+        <g class="rays"><path d="M60 8v14M60 98v14M8 60h14M98 60h14M23 23l10 10M87 87l10 10M97 23L87 33M33 87L23 97"/></g>
+        <circle cx="60" cy="60" r="27" style="fill:#ffe38c"/>
+        <path d="M48 57q4-4 8 0M64 57q4-4 8 0M50 70q10 8 20 0"/>
+        <ellipse cx="45" cy="66" rx="4" ry="2.4" style="fill:var(--blush);stroke:none"/>
+        <ellipse cx="75" cy="66" rx="4" ry="2.4" style="fill:var(--blush);stroke:none"/>
+      </svg>
+      <svg class="dd cloud" viewBox="0 0 130 70" filter="url(#boil)">
+        <path d="M20 58c-14 0-16-20-2-22 0-14 18-20 26-10 6-14 30-14 34 2 14-4 26 8 20 20 10 2 10 12 0 12z" style="fill:#fff"/>
+        <path d="M52 44q3 3 6 0M70 44q3 3 6 0M60 52q4 2 8 0"/>
+        <text x="96" y="20" style="font-family:var(--hand);font-size:16px;fill:var(--ink);stroke:none">z z</text>
+      </svg>
+      <svg class="dd kite" viewBox="0 0 140 200" filter="url(#boil)">
+        <g class="kite-body">
+          <path d="M70 6 L108 52 L70 104 L32 52 Z" style="fill:var(--red)" stroke="var(--red-dark)"/>
+          <path d="M70 6 L108 52 L70 104 L32 52 Z" style="fill:url(#hatch-w);stroke:none"/>
+          <path d="M70 6 L70 104 M32 52 Q70 40 108 52"/>
+          <path d="M64 104 L70 116 L76 104 Z" style="fill:var(--yellow)"/>
+          <path d="M70 116 C 60 140, 84 156, 70 196" stroke-dasharray="3 5"/>
+        </g>
+      </svg>
+      <svg class="dd boat" viewBox="0 0 150 90" filter="url(#boil)">
+        <g class="hull">
+          <path d="M22 52 L128 52 L110 72 L40 72 Z" style="fill:#fff"/>
+          <path d="M48 52 L75 14 L102 52" style="fill:#e8f0ff"/>
+          <path d="M75 14 L75 52"/>
+        </g>
+        <g class="waves"><path d="M4 80q10-8 20 0t20 0 20 0 20 0 20 0 20 0 20 0" stroke="var(--blue)"/></g>
+      </svg>
+      <svg class="dd mug" viewBox="0 0 110 120" filter="url(#boil)">
+        <g class="steam"><path d="M36 40c-8-8 8-14 0-24"/><path d="M50 38c-8-8 8-14 0-24"/><path d="M64 40c-8-8 8-14 0-24"/></g>
+        <path d="M78 62 C 100 60 100 94 76 94" stroke="var(--blue-dark)" stroke-width="5"/>
+        <path d="M20 52 L80 52 L77 104 Q50 112 23 104 Z" style="fill:var(--blue)" stroke="var(--blue-dark)"/>
+        <path d="M20 52 L80 52 L77 104 Q50 112 23 104 Z" style="fill:url(#hatch-w);stroke:none"/>
+        <ellipse cx="50" cy="52" rx="30" ry="6" style="fill:#7a4a2a" stroke="var(--blue-dark)"/>
+        <path d="M38 76q4-4 8 0M54 76q4-4 8 0M44 86q6 5 12 0" stroke="#fff"/>
+      </svg>
+    </div>
+    <div class="scene" id="scene">
+      <div class="plane" id="plane">
+        <div class="plane-edge"></div>
+        <div class="sheet"></div>
+        <svg class="board" id="board" viewBox="-70 -70 640 640" aria-hidden="true"></svg>
+        <i class="anchor" style="left:0;top:0"></i><i class="anchor" style="left:100%;top:0"></i>
+        <i class="anchor" style="left:100%;top:100%"></i><i class="anchor" style="left:0;top:100%"></i>
+      </div>
+    </div>
+    <div class="shadows" id="shadows"></div>
+    <div class="actors" id="actors"></div>
+    <div class="pops" id="pops"></div>
+  </main>
+
+  <div class="dicebar">
+    <button class="roll-btn" id="roll-btn" type="button" aria-label="Roll the die">
+      <div class="die-wrap" id="die-wrap"><div class="cube" id="cube"></div></div>
+      <span class="roll-label" id="roll-label"></span>
+    </button>
+    <button class="doodle-btn skip-btn" id="skip-btn" type="button" hidden>Skip turn</button>
+  </div>
+
+  <aside class="tray">
+    <div class="players" id="players"></div>
+    <div class="note" id="note"><p id="note-text" aria-live="polite"></p></div>
+  </aside>
+</div>
+
+<div class="screen" id="title-screen">
+  <div class="card">
+    <h1 class="write title-word">Race to Home</h1>
+    <p class="sub">A pencil-and-paper race for 2 to 4 players</p>
+    <div class="seats" id="seats"></div>
+    <p class="hint" id="seat-hint">Tap a creature to switch between You, Computer and Off.</p>
+    <div class="actions">
+      <button class="doodle-btn primary" id="start-btn" type="button">Let's play!</button>
+      <button class="doodle-btn" id="resume-btn" type="button" hidden>Resume</button>
+    </div>
+    <div class="actions">
+      <button class="link-btn" id="rules-btn" type="button">How to play</button>
+      <button class="link-btn" id="house-btn" type="button">House rules</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="house-screen" hidden>
+  <div class="card">
+    <h2 class="write" style="font-size:56px">House rules</h2>
+    <p class="sub">Every family plays a little differently. Pick yours.</p>
+    <div class="toggles" id="toggles"></div>
+    <p class="hint" id="house-hint"></p>
+    <div class="actions">
+      <button class="doodle-btn" id="house-reset" type="button">Reset to default</button>
+      <button class="doodle-btn primary" id="house-done" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="rules-screen" hidden>
+  <div class="card">
+    <h2 class="write" style="font-size:56px">How to play</h2>
+    <ol class="rules">
+      <li><b>Start.</b> Every creature begins on its own X. Each player has 4.</li>
+      <li><b>Move.</b> Roll the die and move one creature that many squares: counter-clockwise around the outside, then around the inside ring and into <b>Home</b>.</li>
+      <li><b>Stay safe.</b> The X squares and Home are safe. Anywhere else, if someone lands on you, you go back to your X.</li>
+      <li><b>Pairs.</b> Two or more of your creatures on the same square make a pair, and a pair can't be sent back.</li>
+      <li><b>Lanes.</b> Each color's route is drawn on the board. The brighter, moving one belongs to whoever's turn it is.</li>
+      <li><b>Extra rolls.</b> Roll again after every 6, every time you send someone back, and every time a creature reaches Home.</li>
+      <li><b>Exact roll.</b> You need the exact number to reach Home. If nothing can move, the turn passes.</li>
+      <li><b>Skip.</b> Don't like any move, say one that walks into danger? Tap "Skip turn" after rolling. A skipped 6 still gets its extra roll.</li>
+      <li><b>Win.</b> First to get all 4 Home wins. Everyone else plays on for 2nd and 3rd.</li>
+    </ol>
+    <p class="sub">These are the default rules. Change them in House rules on the start screen. Tip: tap any creature to say hi.</p>
+    <button class="doodle-btn" id="rules-close" type="button">Got it</button>
+  </div>
+</div>
+
+<div class="screen" id="win-screen" hidden>
+  <div class="card">
+    <div class="title-parade" id="win-parade"></div>
+    <h2 class="write title-word" id="win-title"></h2>
+    <ol class="standings" id="standings"></ol>
+    <div class="actions">
+      <button class="doodle-btn primary" id="again-btn" type="button">Play again</button>
+      <button class="doodle-btn" id="players-btn" type="button">Change players</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
